@@ -9,7 +9,7 @@ const app = express();
 // Configura o CORS
 const corsOptions = {
   origin: [
-    'https://ovinisilv.github.io',  // Seu frontend no GitHub Pages
+    'https://ovinisilv.github.io/raspadinha1/',  // Seu frontend no GitHub Pages
     'http://localhost:3000'         // Para testes locais
   ]
 };
