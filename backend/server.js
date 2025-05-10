@@ -1,3 +1,11 @@
+const corsOptions = {
+  origin: [
+    'https://ovinisilv.github.io',  // Seu frontend
+    'http://localhost:3000'         // Para testes locais
+  ]
+};
+app.use(cors(corsOptions));
+
 app.post('/api/pagamento', async (req, res) => {
   const preference = {
     items: [{
