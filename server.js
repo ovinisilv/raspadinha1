@@ -10,7 +10,7 @@ app.use(express.static('public'));
 
 // CORS
 const corsOptions = {
-  origin: ['https://ovinisilv.github.io', 'http://localhost:3000']
+  origin: ['https://ovinisilv.github.io/raspadinha1/', 'http://localhost:3000']
 };
 app.use(cors(corsOptions));
 app.use(express.json());
