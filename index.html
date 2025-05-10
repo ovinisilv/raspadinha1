@@ -88,6 +88,22 @@
         iniciarCanvas();
       }
     });
+    payBtn.addEventListener('click', async () => {
+  try {
+    const response = await fetch('/api/pagamento', { method: 'POST' });
+    const result = await response.json();
+
+    if (result.success) {
+      prizeValue.textContent = `R$${result.premio},00`;
+      scratchCard.style.display = 'block';
+      iniciarCanvas();
+    } else {
+      alert('Erro ao processar pagamento');
+    }
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+  }
+});
 
     function iniciarCanvas() {
       const canvas = document.getElementById("scratchCanvas");

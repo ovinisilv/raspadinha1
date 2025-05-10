@@ -15,6 +15,9 @@ const premios = [2, 3, 10, 20, 50, 100, 500];
 
 app.post('/api/pagamento', async (req, res) => {
   try {
+    // Escolher um prêmio aleatório
+    const premioAleatorio = premios[Math.floor(Math.random() * premios.length)];
+
     const preference = {
       items: [
         {
@@ -32,10 +35,16 @@ app.post('/api/pagamento', async (req, res) => {
     };
 
     const response = await mercadopago.preferences.create(preference);
-    res.json({ init_point: response.body.init_point });
+
+    // Retornar o ponto de inicialização do pagamento e o prêmio aleatório
+    res.json({
+      success: true,
+      init_point: response.body.init_point,
+      premio: premioAleatorio
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao criar pagamento' });
+    res.status(500).json({ success: false, error: 'Erro ao criar pagamento' });
   }
 });
 
