@@ -1,0 +1,121 @@
+<!-- Arquivo: index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raspou Lavou</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #12002f;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .promo-image {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
+      margin-bottom: 2rem;
+    }
+
+    .card-container {
+      margin: 2rem auto;
+      width: 320px;
+      position: relative;
+    }
+
+    #prize {
+      background: linear-gradient(45deg, #ff00c8, #00e0ff);
+      color: #000;
+      font-size: 1.8rem;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 180px;
+      position: absolute;
+      z-index: 0;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      border-radius: 15px;
+    }
+
+    button {
+      margin-top: 2rem;
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      background-color: #00c896;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Raspou Lavou</h1>
+  <img src="/mnt/data/8a835392-e7db-4bbd-aa1d-b183292fe3ec.png" alt="Promoção Raspou Lavou" class="promo-image" />
+
+  <p>Cada raspadinha custa R$1,00. Pague e descubra seu prêmio!</p>
+  <button id="payBtn">Pagar R$1,00</button>
+
+  <div class="card-container" id="scratchCard" style="display:none">
+    <div id="prize">🎉 Parabéns! Você ganhou <span id="prizeValue"></span>!</div>
+    <canvas id="scratchCanvas" width="320" height="180"></canvas>
+  </div>
+
+  <script>
+    const payBtn = document.getElementById('payBtn');
+    const scratchCard = document.getElementById('scratchCard');
+    const prizeValue = document.getElementById('prizeValue');
+
+    payBtn.addEventListener('click', async () => {
+      const response = await fetch('/api/pagamento', { method: 'POST' });
+      const result = await response.json();
+      if (result.success) {
+        prizeValue.textContent = `R$${result.premio},00`;
+        scratchCard.style.display = 'block';
+        iniciarCanvas();
+      }
+    });
+
+    function iniciarCanvas() {
+      const canvas = document.getElementById("scratchCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#888";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      let isDrawing = false;
+
+      canvas.addEventListener("mousedown", () => isDrawing = true);
+      canvas.addEventListener("mouseup", () => isDrawing = false);
+      canvas.addEventListener("mousemove", draw);
+
+      canvas.addEventListener("touchstart", () => isDrawing = true);
+      canvas.addEventListener("touchend", () => isDrawing = false);
+      canvas.addEventListener("touchmove", draw);
+
+      function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+  </script>
+</body>
+</html>
