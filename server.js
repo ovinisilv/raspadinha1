@@ -3,20 +3,19 @@ const express = require('express');
 const cors = require('cors');
 const mercadopago = require('mercadopago');
 
-// Inicializa o app Express
 const app = express();
 
-// Configura o CORS
+// Serve arquivos estáticos
+app.use(express.static('public'));
+
+// CORS
 const corsOptions = {
-  origin: [
-    'https://ovinisilv.github.io/raspadinha1/index.html',  // Seu frontend no GitHub Pages
-    'http://localhost:3000'         // Para testes locais
-  ]
+  origin: ['https://ovinisilv.github.io', 'http://localhost:3000']
 };
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Configura o Mercado Pago
+// Mercado Pago
 mercadopago.configure({
   access_token: process.env.MP_ACCESS_TOKEN
 });
@@ -32,9 +31,9 @@ app.post('/api/pagamento', async (req, res) => {
         unit_price: 1.00
       }],
       back_urls: {
-        success: "https://ovinisilv.github.io/raspadinha1?status=success",
-        failure: "https://ovinisilv.github.io/raspadinha1?status=failure",
-        pending: "https://ovinisilv.github.io/raspadinha1?status=pending"
+        success: "http://localhost:3000?status=success",
+        failure: "http://localhost:3000?status=failure",
+        pending: "http://localhost:3000?status=pending"
       },
       auto_return: "approved"
     };
@@ -50,13 +49,11 @@ app.post('/api/pagamento', async (req, res) => {
   }
 });
 
-// Rota de saúde (opcional)
 app.get('/healthcheck', (req, res) => {
   res.status(200).send('OK');
 });
 
-// Inicia o servidor
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

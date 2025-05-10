@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raspou Lavou</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6c63ff;
+      --secondary: #ff6584;
+      --accent: #00c896;
+      --dark: #1a1a2e;
+      --darker: #16213e;
+      --light: #f8f9fa;
+      --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--darker);
+      color: var(--light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 101, 132, 0.1) 0%, transparent 20%);
+    }
+    
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      width: 100%;
+    }
+    
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+    
+    .tagline {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .promo-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 2rem 0;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s;
+    }
+    
+    .promo-container:hover {
+      transform: translateY(-5px);
+    }
+    
+    .promo-image {
+      width: 100%;
+      display: block;
+    }
+    
+    .promo-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      padding: 2rem 1.5rem 1.5rem;
+      color: white;
+    }
+    
+    .price-tag {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: var(--darker);
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 200, 150, 0.3);
+    }
+    
+    .card-container {
+      margin: 2rem auto;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      perspective: 1000px;
+    }
+    
+    #scratchCard {
+      display: none;
+      transform-style: preserve-3d;
+      transition: all 0.5s ease;
+    }
+    
+    #scratchCard.revealed {
+      transform: rotateY(10deg);
+    }
+    
+    #prize {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-size: 1.5rem;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 200px;
+      position: relative;
+      z-index: 0;
+      box-shadow: 0 10px 30px rgba(108, 99, 255, 0.4);
+      padding: 1rem;
+      text-align: center;
+    }
+    
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      border-radius: 15px;
+      cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AkEEjIZWQZb8QAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAADFUlEQVRYw+2XTUhUURTHf+85M6OOaVpGkUFhBS1KJCIiWgQtjVq0KQjapEEQ1KZNQbsgWgQRLYIgaFEEQYsgaBFRH0uLPoQ+iDItR8fxzTz3tph5OjNv3ow6QYvAD+ede+4Z/v9zzj33wh/+0A6kAAtMAQPAK6APeA5MAjYwD3wFvgBvgGfAY2AQmAKKgAVmgQ/AS+AB0A30Ah+BIhAA48AroB+4D3QBPcAoEAAWGAOeAneBLqAbGAICwAIjwEPgNtAJ3AHeAwFggXfAXeAG0AE8AOYAC4wCt4BrQDvwFJgHLPAauAlcBdqAZ8ACYIFXwHXgCnAZeAEsAhZ4CVwDLgGXgBfAEmCBF8BV4CJwAXgOLAMWeA5cAc4D54BnwApggafAZeAccBZ4CqwCFngCXALOAmeAJ8AaYIHHwEXgDHB6o4EFHgEXgNPAKeARsA5Y4CFwHjgFnAQeABuABe4D54CTwAngPrAJWOAecBY4DhwH7gKbgAXuAGeAY8BR4A6wBVjgNnAaOAIcBm4D24AFbgGngMPAIeAWsANY4CZwEjgEHARuAjuABW4Ax4GDwAHgOrALWOA6cAw4AOwHrgG7gAWuAkeB/cA+4CqwB1jgCnAE2AfsBS4De4EFLgGHgX3AXuASsA9Y4CJwCNgP7AUuAvuBBS4AB4F9wF7gPHAAsMB54ACwH9gLnAMOAhY4C+wH9gF7gLPAIcACZ4B9wF5gD3AGOAxY4DSwF9gD7AZOA0cAC5wC9gC7gd3ASeAoYIGTwG5gN7ALOAEcAyxwAtgF7AR2AseBY4AFjgO7gJ3ADuAYcBywwFFgJ7AD2A4cBU4AFjgC7AC2A9uAI8BJwAKHge3ANmArcAg4BVjgELAN2ApsAQ4CpwELHAS2AluALcAB4DRggf3AFmAzsBnYB5wBLLAP2AxsAjYC/wBx6D9Q9S1O5AAAAABJRU5ErkJggg=='), auto;
+    }
+    
+    .prize-amount {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin: 0 0.5rem;
+      background: white;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .action-section {
+      text-align: center;
+      margin: 2rem 0;
+      width: 100%;
+    }
+    
+    .price-info {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    .price-highlight {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    button {
+      margin-top: 1rem;
+      padding: 1rem 2.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(108, 99, 255, 0.6);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button:disabled {
+      background: #555;
+      transform: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    
+    button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0) 45%,
+        rgba(255, 255, 255, 0.3) 48%,
+        rgba(255, 255, 255, 0) 52%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      20% { transform: translateX(100%) rotate(30deg); }
+      100% { transform: translateX(100%) rotate(30deg); }
+    }
+    
+    .loading {
+      display: none;
+      margin-top: 1.5rem;
+      color: var(--accent);
+    }
+    
+    .loading-spinner {
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 3px solid var(--accent);
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .instructions {
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 1.5rem;
+      border-radius: 15px;
+      max-width: 600px;
+      width: 100%;
+    }
+    
+    .instructions h3 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    
+    .instructions ol {
+      text-align: left;
+      padding-left: 1.5rem;
+    }
+    
+    .instructions li {
+      margin-bottom: 0.5rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+      width: 100%;
+    }
+    
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 2rem;
+      }
+      
+      .card-container {
+        max-width: 320px;
+      }
+      
+      #prize {
+        height: 180px;
+        font-size: 1.3rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="logo">Raspou Lavou</h1>
+      <p class="tagline">A diversão que paga! Cada raspadinha pode ser sua grande chance.</p>
+    </header>
+    
+    <div class="promo-container">
+      <div class="price-tag">Apenas R$1,00</div>
+      <img src="https://images.unsplash.com/photo-1605106702734-205df224ecce?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Promoção Raspou Lavou" class="promo-image">
+      <div class="promo-overlay">
+        <h2>Raspou e Ganhou!</h2>
+        <p>Prêmios instantâneos de até R$100,00</p>
+      </div>
+    </div>
+    
+    <div class="action-section">
+      <p class="price-info">Cada raspadinha custa apenas <span class="price-highlight">R$1,00</span>. Pague e descubra seu prêmio agora mesmo!</p>
+      <button id="payBtn">Pagar R$1,00</button>
+      <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>Processando pagamento...</p>
+      </div>
+    </div>
+    
+    <div class="card-container">
+      <div id="scratchCard">
+        <div id="prize">🎉 Parabéns! Você ganhou <span class="prize-amount" id="prizeValue"></span>!</div>
+        <canvas id="scratchCanvas" width="400" height="200"></canvas>
+      </div>
+    </div>
+    
+    <div class="instructions">
+      <h3>Como funciona?</h3>
+      <ol>
+        <li>Clique no botão "Pagar R$1,00" para comprar sua raspadinha</li>
+        <li>Complete o pagamento de forma segura</li>
+        <li>Volte para esta página e raspe para revelar seu prêmio</li>
+        <li>Prêmios são creditados automaticamente na sua conta</li>
+      </ol>
+    </div>
+    
+    <footer>
+      <p>© 2023 Raspou Lavou - Todos os direitos reservados</p>
+      <p>Jogo destinado exclusivamente a maiores de 18 anos</p>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const payBtn = document.getElementById('payBtn');
+      const scratchCard = document.getElementById('scratchCard');
+      const prizeValue = document.getElementById('prizeValue');
+      const loading = document.getElementById('loading');
+
+      // Verificar se há um prêmio pendente ao carregar a página
+      const urlParams = new URLSearchParams(window.location.search);
+      const premio = urlParams.get('premio');
+      
+      if (premio) {
+        prizeValue.textContent = `R$${premio}`;
+        scratchCard.style.display = 'block';
+        setTimeout(() => {
+          scratchCard.classList.add('revealed');
+        }, 100);
+        iniciarCanvas();
+        // Limpar a URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      payBtn.addEventListener('click', async () => {
+        try {
+          payBtn.disabled = true;
+          loading.style.display = 'block';
+
+          const response = await fetch('http://localhost:3001/api/pagamento', { 
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          const result = await response.json();
+
+          if (result.success) {
+            // Armazena o prêmio temporariamente
+            localStorage.setItem('premioPendente', result.premio);
+            // Redireciona para o checkout
+            window.location.href = result.init_point;
+          } else {
+            alert('Erro ao processar pagamento: ' + (result.error || ''));
+          }
+        } catch (error) {
+          console.error('Erro na requisição:', error);
+          alert('Erro ao conectar com o servidor');
+        } finally {
+          payBtn.disabled = false;
+          loading.style.display = 'none';
+        }
+      });
+
+      function iniciarCanvas() {
+        const canvas = document.getElementById("scratchCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // Preencher o canvas com a camada raspável
+        ctx.fillStyle = "#888";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Adicionar textura
+        ctx.fillStyle = "#999";
+        for (let i = 0; i < 100; i++) {
+          ctx.beginPath();
+          ctx.arc(
+            Math.random() * canvas.width,
+            Math.random() * canvas.height,
+            Math.random() * 3 + 1,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+        
+        let isDrawing = false;
+        let pixelsRevealed = 0;
+        const totalPixels = canvas.width * canvas.height;
+        const revealThreshold = 0.3; // 30% revelado para mostrar tudo
+
+        canvas.addEventListener("mousedown", () => isDrawing = true);
+        canvas.addEventListener("mouseup", () => {
+          isDrawing = false;
+          checkReveal();
+        });
+        canvas.addEventListener("mousemove", draw);
+
+        canvas.addEventListener("touchstart", () => isDrawing = true);
+        canvas.addEventListener("touchend", () => {
+          isDrawing = false;
+          checkReveal();
+        });
+        canvas.addEventListener("touchmove", draw);
+
+        function draw(e) {
+          if (!isDrawing) return;
+          e.preventDefault();
+          
+          const rect = canvas.getBoundingClientRect();
+          const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+          const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+          
+          ctx.globalCompositeOperation = "destination-out";
+          ctx.beginPath();
+          ctx.arc(x, y, 25, 0, 2 * Math.PI);
+          ctx.fill();
+          
+          // Contar pixels revelados (simplificado)
+          pixelsRevealed += 25 * 25 * Math.PI;
+        }
+
+        function checkReveal() {
+          if (pixelsRevealed / totalPixels > revealThreshold) {
+            // Revela tudo se o usuário raspou o suficiente
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Adiciona efeito de confete
+            setTimeout(showConfetti, 300);
+          }
+        }
+        
+        function showConfetti() {
+          // Efeito visual de confete (simplificado)
+          const prizeElement = document.getElementById('prize');
+          prizeElement.innerHTML += '<div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10;"></div>';
+          
+          // Simular confete
+          for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'absolute';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = ['#ff6584', '#6c63ff', '#00c896', '#ffde59'][Math.floor(Math.random() * 4)];
+            confetti.style.borderRadius = '50%';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.top = '-10px';
+            confetti.style.animation = `fall ${Math.random() * 2 + 1}s linear forwards`;
+            prizeElement.lastChild.appendChild(confetti);
+          }
+          
+          // Adicionar animação CSS
+          const style = document.createElement('style');
+          style.innerHTML = `
+            @keyframes fall {
+              to {
+                transform: translateY(210px) rotate(360deg);
+                opacity: 0;
+              }
+            }
+          `;
+          document.head.appendChild(style);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
