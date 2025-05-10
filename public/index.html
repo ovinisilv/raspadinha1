@@ -80,9 +80,9 @@
   <h1>Raspou Lavou</h1>
   <img src="https://via.placeholder.com/800x400/12002f/00c896?text=Raspou+Lavou" alt="Promoção Raspou Lavou" class="promo-image" />
 
-  <p>Cada raspadinha custa R$1,00. Clique para descobrir seu prêmio!</p>
-  <button id="payBtn">Jogar R$1,00</button>
-  <div class="loading" id="loading">Processando...</div>
+  <p>Cada raspadinha custa R$1,00. Pague e descubra seu prêmio!</p>
+  <button id="payBtn">Pagar R$1,00</button>
+  <div class="loading" id="loading">Processando pagamento...</div>
 
   <div class="card-container" id="scratchCard" style="display:none">
     <div id="prize">🎉 Parabéns! Você ganhou <span id="prizeValue"></span>!</div>
@@ -96,30 +96,44 @@
       const prizeValue = document.getElementById('prizeValue');
       const loading = document.getElementById('loading');
 
-      // Valores possíveis de prêmios
-      const premios = [2, 3, 10, 20, 50, 100, 500];
+      // Verificar se há um prêmio pendente ao carregar a página
+      const urlParams = new URLSearchParams(window.location.search);
+      const premio = urlParams.get('premio');
+      
+      if (premio) {
+        prizeValue.textContent = `R$${premio},00`;
+        scratchCard.style.display = 'block';
+        iniciarCanvas();
+        // Limpar a URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
 
-      payBtn.addEventListener('click', () => {
+      payBtn.addEventListener('click', async () => {
         try {
           payBtn.disabled = true;
           loading.style.display = 'block';
 
-          // Simula o processamento do pagamento
-          setTimeout(() => {
-            // Escolhe um prêmio aleatório
-            const premioAleatorio = premios[Math.floor(Math.random() * premios.length)];
-            
-            prizeValue.textContent = `R$${premioAleatorio},00`;
-            scratchCard.style.display = 'block';
-            iniciarCanvas();
-            
-            payBtn.disabled = false;
-            loading.style.display = 'none';
-          }, 1500); // Tempo de simulação
+          const response = await fetch('http://localhost:3001/api/pagamento', { 
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
           
+          const result = await response.json();
+
+          if (result.success) {
+            // Armazena o prêmio temporariamente
+            localStorage.setItem('premioPendente', result.premio);
+            // Redireciona para o checkout
+            window.location.href = result.init_point;
+          } else {
+            alert('Erro ao processar pagamento: ' + (result.error || ''));
+          }
         } catch (error) {
-          console.error('Erro:', error);
-          alert('Ocorreu um erro');
+          console.error('Erro na requisição:', error);
+          alert('Erro ao conectar com o servidor');
+        } finally {
           payBtn.disabled = false;
           loading.style.display = 'none';
         }
