@@ -10,7 +10,7 @@ app.use(express.static('public'));
 
 // CORS
 const corsOptions = {
-  origin: ['https://ovinisilv.github.io/raspadinha1/', 'http://localhost:3001']
+  origin: ['https://ovinisilv.github.io/raspadinha1/public', 'http://localhost:3001']
 };
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -31,10 +31,10 @@ app.post('/api/pagamento', async (req, res) => {
         unit_price: 1.00
       }],
       back_urls: {
-        success: "http://localhost:3001?status=success",
-        failure: "http://localhost:3001?status=failure",
-        pending: "http://localhost:3001?status=pending"
-      },
+  success: "https://xyz123.ngrok.io?status=success",
+  failure: "https://xyz123.ngrok.io?status=failure",
+  pending: "https://xyz123.ngrok.io?status=pending"
+},
       auto_return: "approved"
     };
 
